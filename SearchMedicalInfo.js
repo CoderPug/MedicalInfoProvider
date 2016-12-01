@@ -111,7 +111,7 @@ class SearchMedicalInfo extends Component {
     }
     
     this.setState({ isLoading: true });
-    console.log('{"term":' + this.state.searchString + ',"avanzado":"0"}');
+    console.log('{"term":"' + this.state.searchString + '","avanzado":"0"}');
     
     var request = new Request(query, {
       method: 'POST',
@@ -142,6 +142,13 @@ class SearchMedicalInfo extends Component {
     
     var count = response.d.length;
     console.log(count);
+    if (count == 0) {
+      this.setState({ 
+        isLoading: false,
+        message: count + ' resultados'
+      });
+      return;
+    }
     
     const dataSource = new ListView.DataSource({
       rowHasChanged: (r1, r2) => r1.id !== r2.id
