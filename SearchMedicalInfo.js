@@ -26,12 +26,8 @@ var styles = StyleSheet.create({
   },
   container: {
     padding: 30,
+    paddingBottom: 0,
     marginTop: 65,
-    alignItems: 'center'
-  },
-  resetContainer: {
-    padding: 0,
-    marginTop: 0,
     alignItems: 'center'
   },
   flowRight: {
@@ -68,13 +64,21 @@ var styles = StyleSheet.create({
     color: '#48BBEC'
   },
   listContainer: {
-    width: width,
-    flexDirection: 'row',
-    backgroundColor: '#C1C1C1'
+    width: width
   },
   rowContainer: {
-    width: width,
-    height: 50
+    padding: 10,
+    height: 70,
+    justifyContent: 'space-around'
+  },
+  rowText: {
+    fontSize: 16,
+    textAlign: 'left',
+    color: '#656565'
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#dddddd'
   }
 });
 
@@ -87,7 +91,7 @@ class SearchMedicalInfo extends Component {
       isLoading: false,
       message: '',
       dataSource: new ListView.DataSource(
-        { rowHasChanged: (r1, r2) => r1 !== r2}
+        { rowHasChanged: (r1, r2) => r1.id !== r2.id}
       )
     };
   }
@@ -97,6 +101,15 @@ class SearchMedicalInfo extends Component {
   }
   
   _executeQuery(query) {
+  
+    if (this.state.searchString.length < 3) {
+      this.setState({
+        isLoading: false,
+        message: 'Por favor ingrese al menos 3 caracteres'
+      });
+      return;
+    }
+    
     this.setState({ isLoading: true });
     console.log('{"term":' + this.state.searchString + ',"avanzado":"0"}');
     
@@ -109,13 +122,6 @@ class SearchMedicalInfo extends Component {
     });
     
     fetch(request)
-      // .then((data) => {
-      //   console.log(data.json());
-      //   this.setState({
-      //     isLoading: false,
-      //     message: data.status
-      //   })
-      // })
       .then(response => response.json())
       .then(json => this._handleResponse(json))
       .catch(error =>
@@ -138,7 +144,7 @@ class SearchMedicalInfo extends Component {
     console.log(count);
     
     const dataSource = new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2
+      rowHasChanged: (r1, r2) => r1.id !== r2.id
     });
     
     this.setState({ 
@@ -155,10 +161,11 @@ class SearchMedicalInfo extends Component {
       <TouchableHighlight underlayColor='#dddddd'>
           <View style={styles.rowContainer}>
             <View>
-              <Text>
+              <Text style={styles.rowText}>
               {rowData.value}
               </Text>
             </View>
+            <View style={styles.separator}/>
           </View>
       </TouchableHighlight>
     );
