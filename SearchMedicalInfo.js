@@ -14,6 +14,7 @@ import {
   Dimensions
 } from 'react-native';
 
+var searchMedicalResult = require('./SearchMedicalResult');
 var width = Dimensions.get('window').width;
 var height = Dimensions.get('window').height;
 
@@ -67,8 +68,8 @@ var styles = StyleSheet.create({
     width: width
   },
   rowContainer: {
-    padding: 10,
-    height: 70,
+    padding: 20,
+    height: 60,
     justifyContent: 'space-around'
   },
   rowText: {
@@ -163,16 +164,27 @@ class SearchMedicalInfo extends Component {
     console.log(response.d);
   }
   
+  rowPressed(data) {
+    console.log(data);
+    
+    this.props.navigator.push({
+      title: data.value,
+      component: searchMedicalResult,
+      passProps: data
+    });
+  }
+  
   renderRow(rowData, sectionID, rowID) {
     return (
-      <TouchableHighlight underlayColor='#dddddd'>
+      <TouchableHighlight
+        onPress={() => this.rowPressed(rowData)}
+        underlayColor='#dddddd'>
           <View style={styles.rowContainer}>
             <View>
               <Text style={styles.rowText}>
               {rowData.value}
               </Text>
             </View>
-            <View style={styles.separator}/>
           </View>
       </TouchableHighlight>
     );
