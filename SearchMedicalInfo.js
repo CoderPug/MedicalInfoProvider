@@ -9,8 +9,13 @@ import {
   View,
   TouchableHighlight,
   ActivityIndicator,
-  Image
+  ListView,
+  Image,
+  Dimensions
 } from 'react-native';
+
+var width = Dimensions.get('window').width;
+var height = Dimensions.get('window').height;
 
 var styles = StyleSheet.create({
   description: {
@@ -22,6 +27,11 @@ var styles = StyleSheet.create({
   container: {
     padding: 30,
     marginTop: 65,
+    alignItems: 'center'
+  },
+  resetContainer: {
+    padding: 0,
+    marginTop: 0,
     alignItems: 'center'
   },
   flowRight: {
@@ -56,6 +66,15 @@ var styles = StyleSheet.create({
     borderColor: '#48BBEC',
     borderRadius: 8,
     color: '#48BBEC'
+  },
+  listContainer: {
+    width: width,
+    flexDirection: 'row',
+    backgroundColor: '#C1C1C1'
+  },
+  rowContainer: {
+    width: width,
+    height: 50
   }
 });
 
@@ -66,23 +85,24 @@ class SearchMedicalInfo extends Component {
     this.state = {
       searchString: '',
       isLoading: false,
-      message: ''
+      message: '',
+      dataSource: new ListView.DataSource(
+        { rowHasChanged: (r1, r2) => r1 !== r2}
+      )
     };
   }
   
   onSearchTextChanged(event) {
-    console.log('onSearchTextChanged');
     this.setState({ searchString: event.nativeEvent.text });
-    console.log(this.state.searchString);
   }
   
   _executeQuery(query) {
-    console.log(query);
     this.setState({ isLoading: true });
+    console.log('{"term":' + this.state.searchString + ',"avanzado":"0"}');
     
     var request = new Request(query, {
       method: 'POST',
-      body: '{"term":"Naproxeno","avanzado":"0"}',
+      body: '{"term":"' + this.state.searchString + '","avanzado":"0"}',
       headers: new Headers({
         'Content-Type': 'application/json'
       })
@@ -117,12 +137,31 @@ class SearchMedicalInfo extends Component {
     var count = response.d.length;
     console.log(count);
     
+    const dataSource = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 !== r2
+    });
+    
     this.setState({ 
-      isLoading: false, 
-      message: count + ' resultados'
+      isLoading: false,
+      message: count + ' resultados',
+      dataSource: dataSource.cloneWithRows(response.d)
     });
 
-    console.log(response);
+    console.log(response.d);
+  }
+  
+  renderRow(rowData, sectionID, rowID) {
+    return (
+      <TouchableHighlight underlayColor='#dddddd'>
+          <View style={styles.rowContainer}>
+            <View>
+              <Text>
+              {rowData.value}
+              </Text>
+            </View>
+          </View>
+      </TouchableHighlight>
+    );
   }
   
   render() {
@@ -150,6 +189,12 @@ class SearchMedicalInfo extends Component {
         </View>
         {spinner}
         <Text style={styles.description}>{this.state.message}</Text>
+        <ListView 
+          style={styles.listContainer}
+          dataSource={this.state.dataSource}
+          automaticallyAdjustContentInsets={false}
+          renderRow={this.renderRow.bind(this)}
+        />
       </View>
     );
     
