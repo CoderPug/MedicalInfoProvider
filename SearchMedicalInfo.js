@@ -65,7 +65,8 @@ class SearchMedicalInfo extends Component {
     super(props);
     this.state = {
       searchString: '',
-      isLoading: false
+      isLoading: false,
+      message: ''
     };
   }
   
@@ -78,12 +79,50 @@ class SearchMedicalInfo extends Component {
   _executeQuery(query) {
     console.log(query);
     this.setState({ isLoading: true });
+    
+    var request = new Request(query, {
+      method: 'POST',
+      body: '{"term":"Naproxeno","avanzado":"0"}',
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    });
+    
+    fetch(request)
+      // .then((data) => {
+      //   console.log(data.json());
+      //   this.setState({
+      //     isLoading: false,
+      //     message: data.status
+      //   })
+      // })
+      .then(response => response.json())
+      .then(json => this._handleResponse(json))
+      .catch(error =>
+        this.setState({
+          isLoading: false,
+          message: 'Error ' + error
+        }));
   }
   
   onSearchPressed() {
-    // var query = urlForQueryAndPage('place_name', this.state.searchString, 1);
-    // this._executeQuery(query);
-    this._executeQuery('');
+    var baseURL = 'http://observatorio.digemid.minsa.gob.pe/';
+    var getMedicineListURI = 'Precios/ProcesoL/Consulta/BusquedaGral.aspx/GetListaMedicamentos';
+    var query = baseURL + getMedicineListURI;
+    this._executeQuery(query);
+  }
+  
+  _handleResponse(response) {
+    
+    var count = response.d.length;
+    console.log(count);
+    
+    this.setState({ 
+      isLoading: false, 
+      message: count + ' resultados'
+    });
+
+    console.log(response);
   }
   
   render() {
@@ -110,6 +149,7 @@ class SearchMedicalInfo extends Component {
           </TouchableHighlight>
         </View>
         {spinner}
+        <Text style={styles.description}>{this.state.message}</Text>
       </View>
     );
     
