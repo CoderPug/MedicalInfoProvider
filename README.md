@@ -6,4 +6,6 @@ Provides pricing information about peruvian medical products and also drugstores
 
 ###Demo
 
-![](http://i.imgur.com/poSvk1r.gifv)
+![](http://i.imgur.com/poSvk1r.gif)
+
+![](http://i.imgur.com/qaPESa8.gif)
