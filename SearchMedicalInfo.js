@@ -168,7 +168,7 @@ class SearchMedicalInfo extends Component {
     console.log(data);
     
     this.props.navigator.push({
-      title: data.value,
+      title: 'DETALLE',
       component: searchMedicalResult,
       passProps: data
     });

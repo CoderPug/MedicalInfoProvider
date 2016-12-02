@@ -25,7 +25,7 @@ class MedicalInfo extends React.Component {
       <ReactNative.NavigatorIOS
         style={styles.container}
         initialRoute={{
-          title: 'Buscador',
+          title: 'BUSCADOR',
           component: SearchVC
         }}/>
         
