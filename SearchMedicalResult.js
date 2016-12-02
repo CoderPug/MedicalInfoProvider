@@ -12,6 +12,7 @@ import {
   Dimensions
 } from 'react-native';
 
+var searchMedicalWebView = require('./SearchMedicalWebView');
 var width = Dimensions.get('window').width;
 
 var styles = StyleSheet.create({
@@ -134,9 +135,19 @@ class SearchMedicalResult extends Component {
     this._executeQuery(this.props);
   }
   
+  rowPressed(data) {
+  
+    this.props.navigator.push({
+      title: 'WEB',
+      component: searchMedicalWebView,
+      passProps: data
+    });
+  }
+  
   renderRow(rowData, sectionID, rowID) {
     return (
       <TouchableHighlight
+        onPress={() => this.rowPressed(rowData)}
         underlayColor='#dddddd'>
           <View style={styles.rowContainer}>
             <View>
